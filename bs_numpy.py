@@ -24,7 +24,7 @@ def bootstrap_regression(X, y, seed):
 
     return np.dot((np.dot((np.linalg.inv(np.dot(x_train_rows.T, x_train_rows))), x_train_rows.T)), y_train_rows)
 
-paralleled_results = Parallel(n_jobs=5)(
+paralleled_results = Parallel(n_jobs=50)(
     delayed(bootstrap_regression)(dataMatrix, Yvector, b)
     for b in range(48)
 )

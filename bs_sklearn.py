@@ -26,7 +26,7 @@ def bootstrap_regression(X, y, seed):
     return regression.coef_
 
 #Comenzaremos con 5 workers
-paralleled_results = Parallel(n_jobs=5)(
+paralleled_results = Parallel(n_jobs=61)( # Numero maximo de workers para sklearn en mi sistema operativo
     delayed(bootstrap_regression)(dataMatrix, Yvector, b)
     for b in range(48)
 )

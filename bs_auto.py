@@ -12,7 +12,7 @@ minimumSquareSolution = returnMinimumSquareSolution()
 #Creamos el modelo regreso (con 5 jobs al principio)
 #Aumentaré a 10 para que tome menos tiempo
 bs_regressor = BaggingRegressor(estimator=LinearRegression(fit_intercept=False),
-                                n_estimators=48, bootstrap=True, n_jobs=10)
+                                n_estimators=48, bootstrap=True, n_jobs=10000)
 
 bs_regressor.fit(dataMatrix, Yvector)
 
@@ -35,9 +35,3 @@ coverage = np.mean(inside_interval)
 outside_indices = np.where(~inside_interval)[0]
 
 print(coverage)
-#Ahora vamos con la experimentación de la cantidad de workers para ir optimizando el tiempo
-#5 workers: 13s
-#10 workers: 11s
-#20 workers: 22s
-#15 workers: 17s
-#12 workers: 15s
