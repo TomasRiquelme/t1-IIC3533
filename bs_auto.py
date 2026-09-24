@@ -1,7 +1,14 @@
+import sys
+import time
 import numpy as np
 from variables_config import returnYVector, returnCoeficients, returnDataMatrix, returnMinimumSquareSolution
 from sklearn.ensemble import BaggingRegressor
 from sklearn.linear_model import LinearRegression
+
+if len(sys.argv) > 1:
+    p_argument = int(sys.argv[1])
+else:
+    p_argument = 1
 
 # Importamos los valores a usar
 dataMatrix = returnDataMatrix()
@@ -9,12 +16,18 @@ Yvector = returnYVector()
 coeficients = returnCoeficients()
 minimumSquareSolution = returnMinimumSquareSolution()
 
+start_time = time.time()
+print(f'Ejecutando bs_auto con p = {p_argument} procesos...')
+
 #Creamos el modelo regreso (con 5 jobs al principio)
 #Aumentaré a 10 para que tome menos tiempo
 bs_regressor = BaggingRegressor(estimator=LinearRegression(fit_intercept=False),
-                                n_estimators=48, bootstrap=True, n_jobs=10000)
+                                n_estimators=48, bootstrap=True, n_jobs=p_argument)
 
 bs_regressor.fit(dataMatrix, Yvector)
+
+end_time = time.time()
+print(f'Tiempo de ejecución: {end_time - start_time} segundos')
 
 #Ahora se extraen las 48 regresiones
 regressions_values = np.array(list(map(lambda x: x.coef_, bs_regressor.estimators_)))
@@ -34,4 +47,4 @@ coverage = np.mean(inside_interval)
 #Obtenemos los parámetros que no quedaron dentro del intervalo
 outside_indices = np.where(~inside_interval)[0]
 
-print(coverage)
+print(f'Coverage: {coverage}')

@@ -1,12 +1,20 @@
+import sys
+import time
 import numpy as np
 from variables_config import returnYVector, returnCoeficients, returnDataMatrix, returnMinimumSquareSolution
 from sklearn.linear_model import LinearRegression
 from joblib import Parallel, delayed
 
+if len(sys.argv) > 1:
+    p_argument = int(sys.argv[1])
+else:
+    p_argument = 1
+
 dataMatrix = returnDataMatrix()
 Yvector = returnYVector()
 coeficients = returnCoeficients()
 minimumSquareSolution = returnMinimumSquareSolution()
+
 
 # Primero, defino una función que modele el bootstraping
 def bootstrap_regression(X, y, seed):
@@ -25,11 +33,18 @@ def bootstrap_regression(X, y, seed):
 
     return regression.coef_
 
+start_time = time.time()
+print(f'Ejecutando bs_sklearn con p = {p_argument} procesos...')
+
 #Comenzaremos con 5 workers
-paralleled_results = Parallel(n_jobs=61)( # Numero maximo de workers para sklearn en mi sistema operativo
+paralleled_results = Parallel(n_jobs=p_argument)( # Numero maximo de workers para sklearn en mi sistema operativo
     delayed(bootstrap_regression)(dataMatrix, Yvector, b)
     for b in range(48)
 )
+
+end_time = time.time()
+print(f'Tiempo de ejecución: {end_time - start_time} segundos')
+
 #Ordenamos los valores para sacar los percentiles
 ordered_regressions = np.sort(np.array(paralleled_results), axis=0)
 
@@ -43,4 +58,4 @@ inside_interval = (coeficients >= lower_bound) & (coeficients <= upper_bound)
 #Obtenemos el porcentaje de parámetros que sí estuvieron dentro del intervalo
 coverage = np.mean(inside_interval)
 
-print(coverage)
+print(f'Coverage: {coverage}')
