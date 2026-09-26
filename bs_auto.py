@@ -19,8 +19,6 @@ minimumSquareSolution = returnMinimumSquareSolution()
 start_time = time.time()
 print(f'Ejecutando bs_auto con p = {p_argument} procesos...')
 
-#Creamos el modelo regreso (con 5 jobs al principio)
-#Aumentaré a 10 para que tome menos tiempo
 bs_regressor = BaggingRegressor(estimator=LinearRegression(fit_intercept=False),
                                 n_estimators=48, bootstrap=True, n_jobs=p_argument)
 
@@ -38,13 +36,13 @@ ordered_regressions = np.sort(regressions_values, axis=0)
 lower_bound = np.percentile(regressions_values, 2.5, axis=0)
 upper_bound = np.percentile(regressions_values, 97.5, axis=0)
 
-#Ahora, creo una lista booleana que me indica si cada parámetro real está dentro de su
+# Se crea una lista booleana que indica si cada parámetro real está dentro de su
 # respectivo intervalo
 inside_interval = (coeficients >= lower_bound) & (coeficients <= upper_bound)
 
-#Obtenemos el porcentaje de parámetros que sí estuvieron dentro del intervalo
+# Porcentaje de parámetros que sí estuvieron dentro del intervalo
 coverage = np.mean(inside_interval)
-#Obtenemos los parámetros que no quedaron dentro del intervalo
+# Parámetros que no quedaron dentro del intervalo
 outside_indices = np.where(~inside_interval)[0]
 
 print(f'Coverage: {coverage}')

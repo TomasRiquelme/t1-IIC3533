@@ -16,13 +16,11 @@ coeficients = returnCoeficients()
 minimumSquareSolution = returnMinimumSquareSolution()
 
 
-# Primero, defino una función que modele el bootstraping
 def bootstrap_regression(X, y, seed):
     rng = np.random.default_rng(seed)
 
     N = X.shape[0]
 
-    # Elegir N índices con reemplazo
     indices = rng.choice(N, size=N, replace=True)
 
     X_bootstrap = X[indices]
@@ -36,8 +34,7 @@ def bootstrap_regression(X, y, seed):
 start_time = time.time()
 print(f'Ejecutando bs_sklearn con p = {p_argument} procesos...')
 
-#Comenzaremos con 5 workers
-paralleled_results = Parallel(n_jobs=p_argument)( # Numero maximo de workers para sklearn en mi sistema operativo
+paralleled_results = Parallel(n_jobs=p_argument)(
     delayed(bootstrap_regression)(dataMatrix, Yvector, b)
     for b in range(48)
 )

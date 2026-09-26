@@ -28,12 +28,10 @@ def bootstrap_regression(X, y, seed):
     rng = np.random.default_rng(seed)
     N = X.shape[0]
 
-    # Elegir N índices con reemplazo
     indices = rng.choice(N, size=N, replace=True)
 
     X_bootstrap_idx = X[indices]
     y_bootstrap_idx = y[indices]
-
 
     x_train_rows = np.array(X_bootstrap_idx)
     y_train_rows = np.array(y_bootstrap_idx)
@@ -49,17 +47,15 @@ paralleled_results = Parallel(n_jobs=p_argument)(
 end_time = time.time()
 print(f'Tiempo de ejecución: {end_time - start_time} segundos')
 
-#Ordenamos los valores para sacar los percentiles
+# Se ordenan los valores para sacar los percentiles
 ordered_regressions = np.sort(np.array(paralleled_results), axis=0)
 
-#Obtenemos los percentiles
+# Percentiles
 lower_bound = np.percentile(ordered_regressions, 2.5, axis=0)
 upper_bound = np.percentile(ordered_regressions, 97.5, axis=0)
 
 inside_interval = (coeficients >= lower_bound) & (coeficients <= upper_bound)
 
-#Vemos si los resultados están en los intervalos de confianza
-#Obtenemos el porcentaje de parámetros que sí estuvieron dentro del intervalo
 coverage = np.mean(inside_interval)
 
 print(f'Coverage: {coverage}')
